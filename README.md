@@ -12,7 +12,7 @@ export $ID = <your root account ID>
 # compile code and build wasm file in "res" folder
 ./build.sh 
 
-# create account "contract_account.$ID" and deploy to this account smart-contract
+# create account "contract_account.$ID" and deploy smart-contract to this account 
 ./deploy.sh
 
 # create account $ID for token A and token B
