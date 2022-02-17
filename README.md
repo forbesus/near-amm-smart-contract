@@ -9,7 +9,7 @@
 ```
 export $ID = <your root account ID>
 
-# compile code and build wasm file in "res" folder
+# compile code and build wasm file into "res" folder
 ./build.sh 
 
 # create account "contract_account.$ID" and deploy smart-contract to this account 
