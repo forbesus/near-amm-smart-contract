@@ -27,7 +27,6 @@ fn init_wallets(account_id: AccountId, balance: U128, prefix: u8) -> FungibleTok
 
 #[near_bindgen]
 impl Swap {
-
     pub fn get_balance_a(&self, account_id: &AccountId) -> Balance {
         self.token_a.accounts.get(account_id).expect("Account not found")
     }
@@ -65,7 +64,6 @@ impl Swap {
         let owner_id = env::current_account_id();
         let x = self.get_total_a_tokens();
         let y = self.get_total_b_tokens();
-
         self.token_a.internal_transfer(&account_id, &owner_id, sell_amount.0, None);
         let dy = calc_dy(x, y, sell_amount.0);
         self.token_b.internal_transfer(&owner_id, &account_id, dy, None);
@@ -77,7 +75,6 @@ impl Swap {
         let owner_id = env::current_account_id();
         let y = self.get_total_a_tokens();
         let x = self.get_total_b_tokens();
-
         self.token_b.internal_transfer(&account_id, &owner_id, sell_amount.0, None);
         let buy_amount = calc_dy(x, y, sell_amount.0);
         self.token_a.internal_transfer(&owner_id, &account_id, buy_amount, None);
@@ -155,4 +152,3 @@ mod tests {
         assert_eq!(calc_dy(0, 4, 10), 4);
     }
 }
-
