@@ -7,7 +7,7 @@
 #### Launch
 
 ```
-export $ID = <your root account ID>
+export ID = <your root account ID>
 
 # compile code and build wasm file into "res" folder
 ./build.sh 
