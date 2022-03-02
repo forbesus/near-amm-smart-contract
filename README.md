@@ -90,5 +90,5 @@ NEAR_ENV=testnet near call amm.$ID withdraw_b_tokens '{"amount":"<AMOUNT_TO_WITH
 
 ## Test
 ```
-cargo test
+cargo test --all
 ```
