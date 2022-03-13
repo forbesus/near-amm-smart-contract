@@ -11,9 +11,6 @@ near-contract-standards = "4.0.0-pre.7"
 [dev-dependencies]
 near-sdk-sim = "4.0.0-pre.7"
 
-#[dev-dependencies]
-#near-sdk-sim = "4.0.0-pre.7"
-
 ft = { path = "./ft" }
 amm = { path = "./amm" }
 

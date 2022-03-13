@@ -5,7 +5,9 @@ use near_contract_standards::fungible_token::FungibleToken;
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::LazyOption;
 use near_sdk::json_types::U128;
-use near_sdk::{env, log, near_bindgen, AccountId, Balance, PanicOnDefault, PromiseOrValue};
+use near_sdk::{
+    env, log, near_bindgen, AccountId, Balance, PanicOnDefault, PromiseOrValue,
+};
 
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
@@ -16,8 +18,8 @@ pub struct FtContract {
 
 #[near_bindgen]
 impl FtContract {
-    /// Initializes the contract with the given total supply owned by the given `owner_id` with
-    /// default metadata (for example purposes only).
+    // Initializes the contract with the given total supply owned by the given `owner_id` with
+    // default metadata (for example purposes only).
     #[init]
     pub fn new_default_meta(owner_id: AccountId, total_supply: U128) -> Self {
         Self::new(
@@ -35,8 +37,8 @@ impl FtContract {
         )
     }
 
-    /// Initializes the contract with the given total supply owned by the given `owner_id` with
-    /// the given fungible token metadata.
+    // Initializes the contract with the given total supply owned by the given `owner_id` with
+    // the given fungible token metadata.
     #[init]
     pub fn new(
         owner_id: AccountId,
@@ -56,7 +58,7 @@ impl FtContract {
             amount: &total_supply,
             memo: Some("Initial tokens supply is minted"),
         }
-            .emit();
+        .emit();
         this
     }
 
@@ -70,7 +72,11 @@ impl FtContract {
 }
 
 near_contract_standards::impl_fungible_token_core!(FtContract, token, on_tokens_burned);
-near_contract_standards::impl_fungible_token_storage!(FtContract, token, on_account_closed);
+near_contract_standards::impl_fungible_token_storage!(
+    FtContract,
+    token,
+    on_account_closed
+);
 
 #[near_bindgen]
 impl FungibleTokenMetadataProvider for FtContract {
@@ -80,9 +86,9 @@ impl FungibleTokenMetadataProvider for FtContract {
 }
 
 #[cfg(all(test, not(target_arch = "wasm32")))]
+#[cfg(test)]
 mod tests {
     use near_sdk::test_utils::{accounts, VMContextBuilder};
-    use near_sdk::MockedBlockchain;
     use near_sdk::{testing_env, Balance};
 
     use super::*;
@@ -102,7 +108,8 @@ mod tests {
     fn test_new() {
         let mut context = get_context(accounts(1));
         testing_env!(context.build());
-        let contract = FtContract::new_default_meta(accounts(1).into(), TOTAL_SUPPLY.into());
+        let contract =
+            FtContract::new_default_meta(accounts(1).into(), TOTAL_SUPPLY.into());
         testing_env!(context.is_view(true).build());
         assert_eq!(contract.ft_total_supply().0, TOTAL_SUPPLY);
         assert_eq!(contract.ft_balance_of(accounts(1)).0, TOTAL_SUPPLY);
@@ -120,15 +127,16 @@ mod tests {
     fn test_transfer() {
         let mut context = get_context(accounts(2));
         testing_env!(context.build());
-        let mut contract = FtContract::new_default_meta(accounts(2).into(), TOTAL_SUPPLY.into());
+        let mut contract =
+            FtContract::new_default_meta(accounts(2).into(), TOTAL_SUPPLY.into());
         testing_env!(context
             .storage_usage(env::storage_usage())
             .attached_deposit(contract.storage_balance_bounds().min.into())
             .predecessor_account_id(accounts(1))
             .build());
+
         // Paying for account registration, aka storage deposit
         contract.storage_deposit(None, None);
-
         testing_env!(context
             .storage_usage(env::storage_usage())
             .attached_deposit(1)
@@ -136,14 +144,16 @@ mod tests {
             .build());
         let transfer_amount = TOTAL_SUPPLY / 3;
         contract.ft_transfer(accounts(1), transfer_amount.into(), None);
-
         testing_env!(context
             .storage_usage(env::storage_usage())
             .account_balance(env::account_balance())
             .is_view(true)
             .attached_deposit(0)
             .build());
-        assert_eq!(contract.ft_balance_of(accounts(2)).0, (TOTAL_SUPPLY - transfer_amount));
+        assert_eq!(
+            contract.ft_balance_of(accounts(2)).0,
+            (TOTAL_SUPPLY - transfer_amount)
+        );
         assert_eq!(contract.ft_balance_of(accounts(1)).0, transfer_amount);
     }
 }

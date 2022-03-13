@@ -55,8 +55,6 @@ version = "0.1.0"
 dependencies = [
  "near-contract-standards",
  "near-sdk",
- "rust_decimal",
- "rust_decimal_macros",
 ]
 
 [[package]]
@@ -2583,27 +2581,6 @@ checksum = "23d83c02c429044d58474eaf5ae31e062d0de894e21125b47437ec0edc1397e6"
 dependencies = [
  "libc",
  "librocksdb-sys",
-]
-
-[[package]]
-name = "rust_decimal"
-version = "1.22.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d37baa70cf8662d2ba1c1868c5983dda16ef32b105cce41fb5c47e72936a90b3"
-dependencies = [
- "arrayvec 0.7.2",
- "num-traits",
- "serde",
-]
-
-[[package]]
-name = "rust_decimal_macros"
-version = "1.22.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "184abaf7b434800e1a5a8aad3ebc8cd7498df33af72d65371d797a264713a59b"
-dependencies = [
- "quote",
- "rust_decimal",
 ]
 
 [[package]]

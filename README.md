@@ -1,94 +1,78 @@
-# Near AMM swap tokens
+# Near AMM contract
 
-### This contract shows the logic of the exchange of tokens using AMM
+#### This contract shows the logic of the exchange of tokens using AMM
+#### You can see an example of how contracts work in [simulation tests](tests/sim)
 
-### To exchange tokens, you must first issue them. To do this, you need to deploy two contracts that are engaged in issuing tokens
+#### First you need to deploy FT tokens (example: deploy_ft_a.sh, deploy_ft_b.sh)
+
+#### Next you need to setup FT and get tokens
 
 ```
 export ID = <your root account ID>
 
-# compile code and build WASM files into "res" folder
-./build.sh
+# Create contract with default meta
+near call token_a.$ID new_default_meta '{"owner_id": "token_a.<ID>","total_supply": "1000000"}' --accountId $ID;
 
-# deploy smart contract for issue A tokens
-./deploy_ft_a.sh
+# Set storage deposit
+near call token_a.$ID storage_deposit '{"account_id": "alice.<ID>"}' --accountId $ID --deposit 1 --gas 25000000000000;
+near call token_a.$ID storage_deposit '{"account_id": "amm.<ID>"}' --accountId $ID --deposit 1 --gas 25000000000000;
 
-# deploy smart contract for issue B tokens
-./deploy_ft_b.sh
+# Send tokens to Alice
+near call token_a.$ID ft_transfer '{"receiver_id": "alice.<ID>", "amount": "500000"}' --accountId token_a.$ID --depositYocto 1;
 
-# deploy AMM smart contract for exchange tokens
-./deploy_amm.sh
-
-```
-### Next, you need to initialize the AMM contract
+# For contract B, do the same
 
 ```
-near call amm.$ID new '{"a_contract":"<ISSUER_A_TOKENS_CONTRACT>", "b_contract": "<ISSUER_B_TOKENS_CONTRACT>"}' --accountId $ID;
+#### Next, you need to deploy and setup the AMM contract
 
 ```
-### Next, you need to issue tokens and send it to AMM contract
+# Init contract 
+near call amm.$ID new '{
+    "token_a_contract": "token_a.<ID>",
+    "token_b_contract": "token_b.<ID>",
+    "token_a_metadata": {
+                          "spec": "ft-1.0.0",
+                          "name": "Token A",
+                          "symbol": "A",
+                          "icon": null,
+                          "reference": null,
+                          "reference_hash": null,
+                          "decimals": 4
+                        },
+
+    "token_b_metadata": {
+                          "spec": "ft-1.0.0",
+                          "name": "Token B",
+                          "symbol": "B",
+                          "icon": null,
+                          "reference": null,
+                          "reference_hash": null,
+                          "decimals": 4
+                        }
+            }' --accountId amm.$ID;
+
+
+# Set storage deposit to Alice
+near call amm.$ID storage_deposit '{"token_name":"token_a.<ID>","account_id": "alice.<ID>"}' --accountId amm.$ID --deposit 1 --gas 25000000000000;
 
 ```
-# issue 100 A-tokens
-near call token_a.$ID new '{"total_supply": "100"}' --accountId $ID;
-
-# get 50 tokens to account
-near call token_a.$ID get_some_tokens '{"amount":"50"}' --accountId $ID;
-
-# send 10 tokens to AMM-contract
-near call token_a.$ID transfer_call '{"receiver_id": "<AMM CONNTRACT>", "amount": "10"}' --accountId $ID --amount 0.000000000000000000000001 --gas 300000000000000;
 
 
-# The same operation must be repeated for the contract B
+For send tokens from FT to AMM use FT.ft_transfer_call
 
+For add tokens to pool use AMM.ft_transfer_call
 
-# issue 100 B-tokens
-near call token_b.$ID new '{"total_supply": "100"}' --accountId $ID;
+For exclude tokens from pool use AMM.exclude_tokens_from_pool
 
-# get 50 tokens to account
-near call token_b.$ID get_some_tokens '{"amount":"50"}' --accountId $ID;
+For swap tokens use AMM.swap
 
-# send 10 tokens to AMM-contract
-near call token_b.$ID transfer_call '{"receiver_id": "<AMM CONNTRACT>", "amount": "10"}' --accountId $ID --amount 0.000000000000000000000001 --gas 300000000000000;
+For withdraw tokens use AMM.withdraw
 
-```
-
-#### Now AMM contract have 10 A tokens and 10 B tokens
-
-#### For show current state of AMM contract call:
-```
-near call amm.$ID print_state '{}' --accountId $ID;
-# Log: Your tokens: A:10 B:10
-# Log: Total pool size: A:0 B:0
-```
-
-#### To add tokens to the pool you need to execute this command
-```
-near call amm.$ID add_to_liquidity_pool '{"token_a_amount":"<A_TOKENS_AMOUNT>", "token_b_amount": "<B_TOKENS_AMOUNT>"}' --accountId $ID;
-```
-
-#### To exclude tokens from the pool
-
-```
-near call amm.$ID exclude_tokens_from_liquidity_pool '{}' --accountId $ID;
-```
-#### To exchange tokens using a pool (it must not be empty)
-
-```
-# A to B
-near call amm.$ID buy_b_tokens '{"sell_amount":"<A_TOKENS_AMOUNT>"}' --accountId $ID;
-
-# B to A
-near call amm.$ID buy_a_tokens '{"sell_amount":"<B_TOKENS_AMOUNT>"}' --accountId $ID;
-```
-#### To withdraw tokens from the AMM contract back to token issuing contracts
-
-```
-NEAR_ENV=testnet near call amm.$ID withdraw_a_tokens '{"amount":"<AMOUNT_TO_WITHDRAW>"}' --accountId $ID --amount 0.000000000000000000000001 --gas 300000000000000;
-NEAR_ENV=testnet near call amm.$ID withdraw_b_tokens '{"amount":"<AMOUNT_TO_WITHDRAW>"}' --accountId $ID --amount 0.000000000000000000000001 --gas 300000000000000;
-```
 
 ## Test
 ```
 cargo test --all
 ```
+
+## Problems
+Floating point calculation not implemented. Rounding in Swap does not work correctly
