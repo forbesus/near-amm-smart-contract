@@ -10,3 +10,5 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 near-sdk = "4.0.0-pre.7"
 near-contract-standards = "4.0.0-pre.7"
+rust_decimal = "1.22"
+rust_decimal_macros = "1.22"
