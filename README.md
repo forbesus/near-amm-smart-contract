@@ -2,6 +2,12 @@
 
 #### This contract shows the logic of the exchange of tokens using AMM
 #### You can see an example of how contracts work in [simulation tests](tests/sim)
+#### Build
+```
+rustup target add wasm32-unknown-unknown
+
+./build.sh
+```
 
 #### First you need to deploy FT tokens (example: deploy_ft_a.sh, deploy_ft_b.sh)
 
