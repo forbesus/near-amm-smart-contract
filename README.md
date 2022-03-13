@@ -21,7 +21,6 @@ near call token_a.$ID storage_deposit '{"account_id": "amm.<ID>"}' --accountId $
 near call token_a.$ID ft_transfer '{"receiver_id": "alice.<ID>", "amount": "500000"}' --accountId token_a.$ID --depositYocto 1;
 
 # For contract B, do the same
-
 ```
 #### Next, you need to deploy and setup the AMM contract
 
@@ -54,19 +53,18 @@ near call amm.$ID new '{
 
 # Set storage deposit to Alice
 near call amm.$ID storage_deposit '{"token_name":"token_a.<ID>","account_id": "alice.<ID>"}' --accountId amm.$ID --deposit 1 --gas 25000000000000;
-
 ```
 
 
 For send tokens from FT to AMM use FT.ft_transfer_call
 
-For add tokens to pool use AMM.ft_transfer_call
+For add tokens to pool use AMM.add_tokens_to_pool
 
 For exclude tokens from pool use AMM.exclude_tokens_from_pool
 
 For swap tokens use AMM.swap
 
-For withdraw tokens use AMM.withdraw
+For withdraw tokens use AMM.withdraw_tokens
 
 
 ## Test

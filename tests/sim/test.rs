@@ -95,24 +95,20 @@ fn send_tokens_to_amm_and_withdraw() {
     .assert_success();
 
     // Check FT root balance without sent tokens
-    let root_balance_a: U128 =
-        view!(ft_a.ft_balance_of(root.account_id())).unwrap_json();
+    let root_balance_a: U128 = view!(ft_a.ft_balance_of(root.account_id())).unwrap_json();
     assert_eq!(
         initial_balance - transfer_to_alice_amount_a,
         root_balance_a.0
     );
-    let root_balance_b: U128 =
-        view!(ft_b.ft_balance_of(root.account_id())).unwrap_json();
+    let root_balance_b: U128 = view!(ft_b.ft_balance_of(root.account_id())).unwrap_json();
     assert_eq!(
         initial_balance - transfer_to_alice_amount_b,
         root_balance_b.0
     );
 
     // Check alice balance in FT
-    let alice_balance_ft_a: U128 =
-        view!(ft_a.ft_balance_of(alice.account_id())).unwrap_json();
-    let alice_balance_ft_b: U128 =
-        view!(ft_b.ft_balance_of(alice.account_id())).unwrap_json();
+    let alice_balance_ft_a: U128 = view!(ft_a.ft_balance_of(alice.account_id())).unwrap_json();
+    let alice_balance_ft_b: U128 = view!(ft_b.ft_balance_of(alice.account_id())).unwrap_json();
     assert_eq!(
         transfer_to_alice_amount_a - transfer_to_amm_amount_a,
         alice_balance_ft_a.0
@@ -146,10 +142,8 @@ fn send_tokens_to_amm_and_withdraw() {
     .assert_success();
 
     // Check alice balance in FT
-    let alice_balance_ft_a: U128 =
-        view!(ft_a.ft_balance_of(alice.account_id())).unwrap_json();
-    let alice_balance_ft_b: U128 =
-        view!(ft_b.ft_balance_of(alice.account_id())).unwrap_json();
+    let alice_balance_ft_a: U128 = view!(ft_a.ft_balance_of(alice.account_id())).unwrap_json();
+    let alice_balance_ft_b: U128 = view!(ft_b.ft_balance_of(alice.account_id())).unwrap_json();
     assert_eq!(alice_balance_ft_a.0, transfer_to_alice_amount_a);
     assert_eq!(alice_balance_ft_b.0, transfer_to_alice_amount_b);
 

@@ -1,8 +1,6 @@
 use amm::AMMContract;
 use ft::FtContractContract as FtContract;
-use near_contract_standards::fungible_token::metadata::{
-    FungibleTokenMetadata, FT_METADATA_SPEC,
-};
+use near_contract_standards::fungible_token::metadata::{FungibleTokenMetadata, FT_METADATA_SPEC};
 use near_sdk::serde_json::json;
 use near_sdk_sim::{deploy, init_simulator, to_yocto, ContractAccount, UserAccount};
 
@@ -27,7 +25,7 @@ pub fn register_user(contract_id: &str, user: &near_sdk_sim::UserAccount) {
         .to_string()
         .into_bytes(),
         near_sdk_sim::DEFAULT_GAS / 2,
-        near_sdk::env::storage_byte_cost() * 1250, // attached deposit
+        near_sdk::env::storage_byte_cost() * 125, // attached deposit
     )
     .assert_success();
 }

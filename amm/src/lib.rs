@@ -14,8 +14,7 @@ use near_sdk::collections::LookupMap;
 use near_sdk::ext_contract;
 use near_sdk::json_types::U128;
 use near_sdk::{
-    env, log, near_bindgen, AccountId, Gas, PanicOnDefault, PromiseOrValue,
-    PromiseResult,
+    env, log, near_bindgen, AccountId, Gas, PanicOnDefault, PromiseOrValue, PromiseResult,
 };
 
 use crate::utils::{add_decimals, calc_dy, remove_decimals};
@@ -96,12 +95,9 @@ impl AMM {
         let y = buy_token.0.internal_unwrap_balance_of(&pool_owner_id);
 
         // Send sell_tokens to pool from seller
-        sell_token.0.internal_transfer(
-            &user_account_id,
-            &pool_owner_id,
-            sell_amount.0,
-            None,
-        );
+        sell_token
+            .0
+            .internal_transfer(&user_account_id, &pool_owner_id, sell_amount.0, None);
 
         // Convert to the same decimal
         let max_decimals = max(buy_token.1.decimals, sell_token.1.decimals);
@@ -112,16 +108,12 @@ impl AMM {
         let buy_amount = calc_dy(x, y, sell_amount.0);
 
         // Restore decimal
-        let buy_amount =
-            remove_decimals(buy_amount, max_decimals - buy_token.1.decimals);
+        let buy_amount = remove_decimals(buy_amount, max_decimals - buy_token.1.decimals);
 
         // Send buy value to user buyer
-        buy_token.0.internal_transfer(
-            &pool_owner_id,
-            &user_account_id,
-            buy_amount,
-            None,
-        );
+        buy_token
+            .0
+            .internal_transfer(&pool_owner_id, &user_account_id, buy_amount, None);
 
         // Update tokens data in lookup map
         self.tokens.insert(&buy_token_name, &buy_token);
@@ -159,22 +151,15 @@ impl AMM {
 
         // We can add tokens to the pool only by proportionally increasing them
         if pool_a_balance * token_b_amount.0 == pool_b_balance * token_a_amount.0 {
-            token_a.0.internal_transfer(
-                &payer_id,
-                &pool_owner_id,
-                token_a_amount.0,
-                None,
-            );
-            token_b.0.internal_transfer(
-                &payer_id,
-                &pool_owner_id,
-                token_b_amount.0,
-                None,
-            );
+            token_a
+                .0
+                .internal_transfer(&payer_id, &pool_owner_id, token_a_amount.0, None);
+            token_b
+                .0
+                .internal_transfer(&payer_id, &pool_owner_id, token_b_amount.0, None);
             // Calc share of added tokens
-            let share =
-                add_decimals(token_a_amount.0, max_decimals - token_a.1.decimals)
-                    + add_decimals(token_b_amount.0, max_decimals - token_a.1.decimals);
+            let share = add_decimals(token_a_amount.0, max_decimals - token_a.1.decimals)
+                + add_decimals(token_b_amount.0, max_decimals - token_a.1.decimals);
 
             // Store share
             self.token_amm.internal_deposit(&payer_id, share);
@@ -191,11 +176,7 @@ impl AMM {
     // Here we are excluding all tokens of signed account from
     // liquidity pool and return those tokens back to predecessor_account_id
     // in the right proportion
-    pub fn exclude_tokens_from_pool(
-        &mut self,
-        token_a_name: AccountId,
-        token_b_name: AccountId,
-    ) {
+    pub fn exclude_tokens_from_pool(&mut self, token_a_name: AccountId, token_b_name: AccountId) {
         if token_a_name.eq(&token_b_name) {
             panic!("Tokens can't be equals")
         }
@@ -224,18 +205,12 @@ impl AMM {
                 .internal_unwrap_balance_of(&predecessor_account_id),
         );
         // Transfer tokens from pool to user wallet
-        token_a.0.internal_transfer(
-            &env::current_account_id(),
-            &predecessor_account_id,
-            a,
-            None,
-        );
-        token_b.0.internal_transfer(
-            &env::current_account_id(),
-            &predecessor_account_id,
-            b,
-            None,
-        );
+        token_a
+            .0
+            .internal_transfer(&env::current_account_id(), &predecessor_account_id, a, None);
+        token_b
+            .0
+            .internal_transfer(&env::current_account_id(), &predecessor_account_id, b, None);
         // Update tokens data in lookup map
         self.tokens.insert(&token_a_name, &token_a);
         self.tokens.insert(&token_b_name, &token_b);
@@ -316,11 +291,7 @@ impl AMM {
 
     #[payable]
     #[allow(dead_code)]
-    fn storage_withdraw(
-        &mut self,
-        token_name: AccountId,
-        amount: Option<U128>,
-    ) -> StorageBalance {
+    fn storage_withdraw(&mut self, token_name: AccountId, amount: Option<U128>) -> StorageBalance {
         if token_name == env::current_account_id() {
             self.token_amm.storage_withdraw(amount)
         } else {
@@ -333,11 +304,7 @@ impl AMM {
 
     #[payable]
     #[allow(dead_code)]
-    fn storage_unregister(
-        &mut self,
-        token_name: AccountId,
-        force: Option<bool>,
-    ) -> bool {
+    fn storage_unregister(&mut self, token_name: AccountId, force: Option<bool>) -> bool {
         if token_name == env::current_account_id() {
             if let Some((_, _)) = self.token_amm.internal_storage_unregister(force) {
                 return true;
