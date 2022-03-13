@@ -74,3 +74,5 @@ cargo test --all
 
 ## Problems
 Floating point calculation not implemented. Rounding in Swap does not work correctly
+
+cargo test not working on Mac M1 (wasmer error)
