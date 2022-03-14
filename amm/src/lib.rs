@@ -216,7 +216,8 @@ impl AMM {
         self.tokens.insert(&token_b_name, &token_b);
     }
 
-    pub fn withdraw_tokens(&self, token_name: AccountId, amount: U128) {
+    #[payable]
+    pub fn withdraw_tokens(&mut self, token_name: AccountId, amount: U128) {
         let account_id = env::predecessor_account_id();
         if !self.tokens.contains_key(&token_name) {
             panic!("Token not supported");
@@ -238,7 +239,6 @@ impl AMM {
         ));
     }
 
-    #[payable]
     pub fn withdraw_tokens_callback(&mut self, token_name: AccountId, amount: U128) {
         match env::promise_result(0) {
             PromiseResult::NotReady => unreachable!(),
@@ -346,7 +346,6 @@ impl AMM {
 
 #[near_bindgen]
 impl FungibleTokenReceiver for AMM {
-    #[payable]
     fn ft_on_transfer(
         &mut self,
         sender_id: AccountId,

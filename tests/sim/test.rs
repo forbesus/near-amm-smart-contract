@@ -126,7 +126,7 @@ fn send_tokens_to_amm_and_withdraw() {
     assert_eq!(transfer_to_amm_amount_a, alice_balance_amm_a.0);
     assert_eq!(transfer_to_amm_amount_b, alice_balance_amm_b.0);
 
-    // Цithdraw all tokens back
+    // Withdraw all tokens back
     call!(
         alice,
         amm.withdraw_tokens(ft_a.account_id(), alice_balance_amm_a),
